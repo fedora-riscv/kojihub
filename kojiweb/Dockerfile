@@ -1,8 +1,19 @@
 FROM fedora:38
 
-RUN dnf install mod_ssl httpd git koji-hub koji-web koji-utils openssl tree -y
+HEALTHCHECK --interval=5s --timeout=3s \
+  CMD curl -f http://localhost/koji || exit 1
 
-# 安装完后再挪过来，好像目前不需要了（
+RUN sed -e 's|^metalink=|#metalink=|g' \
+         -e 's|^#baseurl=http://download.example/pub/fedora/linux|baseurl=https://mirrors.ustc.edu.cn/fedora|g' \
+         -i.bak \
+         /etc/yum.repos.d/fedora.repo \
+         /etc/yum.repos.d/fedora-modular.repo \
+         /etc/yum.repos.d/fedora-updates.repo \
+         /etc/yum.repos.d/fedora-updates-modular.repo
+
+RUN dnf install curl mod_ssl httpd git koji-hub koji-web koji-utils openssl tree -y
+
+# 安装完后再挪过来
 # RUN mkdir -p /etc/default/koji /etc/default/httpd
 
 # RUN cp /etc/koji.conf /etc/default/koji/koji.conf && \
