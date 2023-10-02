@@ -45,3 +45,17 @@ services:
       - kojiweb
       - kojidb
     restart: always
+
+  kojid:
+    build: kojid
+    privileged: true
+    volumes:
+      - "./kojid/config:/etc/kojid:ro"
+      - "./ssl:/etc/pki/koji:ro"
+      # - "/mnt/koji:/mnt/koji:z"
+    extra_hosts:
+      - "openkoji.iscas.ac.cn:192.168.6.179"
+    depends_on:
+      - kojiweb
+      - kojidb
+    restart: always
