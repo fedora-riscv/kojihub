@@ -1,61 +1,12 @@
 version: '3'
 
 services:
-  kojiweb:
-    build: kojiweb
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - "./kojiweb/config/httpd:/etc/httpd:ro"
-      - "./kojiweb/config/koji-gc:/etc/koji-gc:ro"
-      - "./kojiweb/config/koji-hub:/etc/koji-hub:ro"
-      - "./kojiweb/config/koji-shadow:/etc/koji-shadow:ro"
-      - "./kojiweb/config/koji.conf.d:/etc/koji.conf.d:ro"
-      - "./kojiweb/config/kojira:/etc/kojira:ro"
-      - "./kojiweb/config/kojiweb:/etc/kojiweb:ro"
-      - "./kojiweb/config/koji.conf:/etc/koji.conf:ro"
-      - "./ssl:/etc/pki/koji:z"
-      # - "/mnt/koji:/mnt/koji:z"
-    depends_on:
-      - kojidb
-    restart: always
-
-  kojidb:
-    image: docker.io/library/postgres:9.6
-    volumes:
-      - "./kojidb/data:/var/lib/postgresql/data:z"
-      - "./kojidb/init.sql:/docker-entrypoint-initdb.d/init.sql:ro"
-    environment:
-      - POSTGRES_USER=koji
-      - POSTGRES_PASSWORD=koji
-      - POSTGRES_DB=koji
-    restart: always
-
-  kojira:
-    build: kojira
-    volumes:
-      - "./kojira/config:/etc/kojira:ro"
-      - "./ssl:/etc/pki/koji:ro"
-      # - "/mnt/koji:/mnt/koji:z"
-    extra_hosts:
-      - "openkoji.iscas.ac.cn:192.168.6.179"
-    depends_on:
-      - kojiweb
-      - kojidb
-    restart: always
-
   kojid:
     build: kojid
     privileged: true
     volumes:
       - "./kojid/config:/etc/kojid:ro"
-      - "./ssl:/etc/pki/koji:ro"
       # - "/mnt/koji:/mnt/koji:z"
     extra_hosts:
-      - "openkoji.iscas.ac.cn:192.168.6.179"
-    depends_on:
-      - kojiweb
-      - kojidb
+      - "openkoji.iscas.ac.cn:192.168.6.177"
     restart: always
